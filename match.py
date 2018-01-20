@@ -8,18 +8,13 @@ n = int(inputs.pop(0))
 inputs = [[int(char) for char in string.split()] for string in inputs]
 
 professor_pref = inputs[:n]
-professor_indx = [-1] * n
 student_pref = inputs[n:]
-student_indx = [-1] * n
 
 def inv_index(pref):
     index_arr = [0] * len(pref)
     for idx, val in enumerate(pref):
         index_arr[val] = idx
     return index_arr
-
-professor_queue = list(reversed(range(n)))
-student_inv_index = [inv_index(ele_arr) for ele_arr in student_pref]
 
 def pretty_tab(prefs, idxs, highlight):
     for i, row in enumerate(prefs):
@@ -39,29 +34,47 @@ def pretty_tab(prefs, idxs, highlight):
             print rst,
         print('')
 
-def debug_print(p, s):
-    print(professor_queue, (p, s))
-    print('Professor preference')
-    pretty_tab(professor_pref, professor_indx, (p, professor_indx[p] + 1))
-    print('Student preference')
-    pretty_tab(student_pref, student_indx, (s, student_inv_index[s][p]))
-    print('')
+def gale_shapley_match(P, S, n):
+	professor_queue = list(reversed(range(n)))
+	professor_indx = [-1] * n
+	student_indx = [-1] * n
+	student_inv_index = [inv_index(ele_arr) for ele_arr in S]
+	while len(professor_queue):
+		p = professor_queue.pop()
+		professor_indx[p] += 1
+		s = P[p][professor_indx[p]]
+		if student_indx[s] < 0:
+			student_indx[s] = student_inv_index[s][p]
+		else:
+			t = S[s][student_indx[s]]
+			if student_inv_index[s][p] < student_inv_index[s][t]:
+				student_indx[s] = student_inv_index[s][p]
+				professor_queue.append(t);
+			else:
+				professor_queue.append(p);
+		########
+		## Debug Printing
+		########
+		# if len(professor_queue):
+		# 	p = professor_queue[-1]
+		# 	s = P[p][professor_indx[p] + 1]
+		# print(professor_queue, (p, s))
+		# print('Professor preference')
+		# pretty_tab(P, professor_indx, (p, professor_indx[p] + 1))
+		# print('Student preference')
+		# pretty_tab(S, student_indx, (s, student_inv_index[s][p]))
+		# print('')
+	return (professor_indx, student_indx)
 
-while len(professor_queue):
-    p = professor_queue.pop()
-    professor_indx[p] += 1
-    s = professor_pref[p][professor_indx[p]]
-    if student_indx[s] < 0:
-        student_indx[s] = student_inv_index[s][p]
-    else:
-        t = student_pref[s][student_indx[s]]
-        if student_inv_index[s][p] < student_inv_index[s][t]:
-            student_indx[s] = student_inv_index[s][p]
-            professor_queue.append(t);
-        else:
-            professor_queue.append(p);
-    # debug
-    if len(professor_queue):
-        p = professor_queue[-1]
-        s = professor_pref[p][professor_indx[p] + 1]
-    debug_print(p, s)
+Mp, Ms = gale_shapley_match(professor_pref, student_pref, n)
+#print(Mp)
+#print(Ms)
+#print('')
+
+Np, Ns = gale_shapley_match(student_pref, professor_pref, n)
+#print(Np)
+#print(Ns)
+
+z = zip(Mp, Ns)
+result = sum([1 for (s,t) in z if s == t])
+print(result)
