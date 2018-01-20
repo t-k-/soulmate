@@ -16,23 +16,23 @@ def inv_index(pref):
         index_arr[val] = idx
     return index_arr
 
-def pretty_tab(prefs, idxs, highlight):
-    for i, row in enumerate(prefs):
-        for j, col in enumerate(row):
-            grn = '\033[0;42m'
-            red = '\033[1;31m'
-            rst = '\033[0;0m'
-            fmt = '{0:4d}'
-            if (i , j) == highlight:
-                fmt = '{0:3d}'
-                print grn,
-            if j == idxs[i]:
-                fmt = red + fmt
-                print fmt.format(col),
-            else:
-                print fmt.format(col),
-            print rst,
-        print('')
+# def pretty_tab(prefs, idxs, highlight):
+#     for i, row in enumerate(prefs):
+#         for j, col in enumerate(row):
+#             grn = '\033[0;42m'
+#             red = '\033[1;31m'
+#             rst = '\033[0;0m'
+#             fmt = '{0:4d}'
+#             if (i , j) == highlight:
+#                 fmt = '{0:3d}'
+#                 print grn,
+#             if j == idxs[i]:
+#                 fmt = red + fmt
+#                 print fmt.format(col),
+#             else:
+#                 print fmt.format(col),
+#             print rst,
+#         print('')
 
 def gale_shapley_match(P, S, n):
 	professor_queue = list(reversed(range(n)))
